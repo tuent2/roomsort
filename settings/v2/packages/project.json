@@ -1,0 +1,15 @@
+{
+  "__version__": "1.0.6",
+  "general": {
+    "designResolution": {
+      "width": 468,
+      "height": 833
+    }
+  },
+  "layer": [
+    {
+      "name": "Target",
+      "value": 1
+    }
+  ]
+}
