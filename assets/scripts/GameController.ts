@@ -25,9 +25,21 @@ export class GameController extends Component {
 
     stageNumber: number = 1;
 
+    @property(Node) Room1: Node = null;
+    @property(Node) public Position: Node[] = [];
+
+    @property([Node]) public Stage1: Node[][] = [];
+
+    protected onLoad(): void {
+        GameController.instance = this;
+    }
 
     protected start(): void {
         this.addInputEvent();
+        this.Room1.children.forEach(child => {
+            //console.log(child.name);
+            this.Position.push(child);
+        });
     }
     scaleObject(targetNode: Node) {
         // Bắt đầu scale từ 0
@@ -37,6 +49,7 @@ export class GameController extends Component {
         tween(targetNode)
             .to(1, { scale: v3(1, 1, 1) })
             .start();
+
     }
 
     addInputEvent() {
