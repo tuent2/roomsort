@@ -9,7 +9,9 @@ export class Room extends Component {
     initialPosition: Vec3 = new Vec3();
     isDragging: boolean = true;
     isInShape: boolean = false;
-
+    isRightShape: boolean = false;
+    isDone: boolean = true;
+    @property number : number = 1;
     //@property targetPosition: Vec3 = new Vec3();
     //@property canStayPosition2: Vec3[] = [];
     @property(Vec3) public canStayPosition: Vec3[] = [];
@@ -17,8 +19,8 @@ export class Room extends Component {
     // let targetArray: Node[] = [];
 
     @property(Node) Position: Node[] = [];
-
-
+    
+ 
 
     start() {
         this.initialPosition.set(this.node.worldPosition);
@@ -139,12 +141,17 @@ export class Room extends Component {
             if (this.isBoxInside(movingBox, expandedBox)) {
                 console.log("The shape can fit into the target shape.");
                 this.isInShape = true;
-
+                this.setNearestPosition(this.node.position);
+            
             } else {
                 console.log("The shape cannot fit into the target shape.");
                 this.isInShape = false;
                 this.node.scale = new Vec3(0.9, 0.9, 0.9)
                 this.node.setWorldPosition(this.initialPosition);
+                if (this.isRightShape) {
+                    this.isRightShape = false;
+                    GameController.instance.minusScore();
+                }
             }
 
             for (let j = 0; j < this.Position.length; j++) {
@@ -156,6 +163,32 @@ export class Room extends Component {
                 nodeB.active = false;
             }
         }
+    }
+
+    public setNearestPosition(currentPosition: Vec3): void {
+        if (this.canStayPosition.length === 0) return;
+
+        let nearestPosition = this.canStayPosition[0];
+        let minDistance = Vec3.distance(currentPosition, nearestPosition);
+
+        for (let i = 1; i < this.canStayPosition.length; i++) {
+            const position = this.canStayPosition[i];
+            const distance = Vec3.distance(currentPosition, position);
+            
+            if (distance < minDistance) {
+                nearestPosition = position;
+                minDistance = distance;
+                if (i == 0 && !this.isRightShape) {
+                    this.isRightShape == true;
+                    GameController.instance.addScore();
+                }
+            }
+
+            
+        }
+
+        // Đặt vị trí hiện tại bằng vị trí gần nhất tìm được
+        this.node.setPosition(nearestPosition);
     }
 
     isBoxInside(innerBox: Rect, outerBox: Rect): boolean {
